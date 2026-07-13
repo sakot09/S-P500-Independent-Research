@@ -13,4 +13,12 @@ for col in df.columns:
 
 
 df.dropna(axis=0, how="any", subset=["PE10"], inplace= True)
+
 df.to_csv("cleaned_sp500.csv", index=False)
+
+print(df.isna().sum())
+
+print(df["Date"].min())
+print(df["Date"].max())
+
+print(df.shape)
