@@ -22,33 +22,68 @@ model_df = df[df["Annual Return"].notna()].reset_index(drop=True)
 features = model_df[["PE10"]]
 label = model_df["Annual Return"]
 
-cutoff = int(.8*len(model_df))
+
+
+
+cutoff = 600
+
+mse_scores = []
+times = []
+
+while cutoff + 60 <= len(features):
+
+
+    X_train = features[:cutoff]
+    y_train = label[:cutoff]
+
+    X_test = features[cutoff:cutoff+60]
+    y_test = label[cutoff:cutoff+60]
+
+    lin_reg = LinearRegression()
+    lin_reg.fit(X_train, y_train)
+
+    predictions = lin_reg.predict(X_test)
+
+    mse = mean_squared_error(y_test, predictions)
+
+    mse_scores.append(mse)
+    
+    time_period = model_df['Date'][cutoff]
+
+    times.append(time_period)
+
+    cutoff+=60
 
 X_train = features[:cutoff]
 y_train = label[:cutoff]
 
-X_test = features[cutoff:]
-y_test = label[cutoff:]
+X_test = features[cutoff:len(features)]
+y_test = label[cutoff:len(features)]
 
 lin_reg = LinearRegression()
 lin_reg.fit(X_train, y_train)
 
 predictions = lin_reg.predict(X_test)
 
-plt.figure(figsize=(8, 8))
+mse = mean_squared_error(y_test, predictions)
+mse_scores.append(mse)
+    
+time_period = model_df['Date'][cutoff]
+times.append(time_period)
+
+for i in range(len(times)):
+    year = times[i][:4]
+    times[i] = year
+
+plt.plot(times, mse_scores)
+
+plt.xlabel("Date")
+plt.xticks(fontsize = 7)
+plt.ylabel("MSE")
+plt.title("MSE of Model Over Time")
+
+plt.savefig("mse_ot.png")
 
 
-plt.scatter(y_test, predictions)
-plt.plot([0, 1], [0, 1], '--k', label="Correct prediction")
-
-
-plt.xlabel('True Return')
-plt.ylabel('Predicted Return')
-plt.title("Real vs. Predicted Return")
-
-plt.axis('tight')
-plt.legend()
-plt.tight_layout()
-plt.savefig("model_accuracy.png")
 
 
