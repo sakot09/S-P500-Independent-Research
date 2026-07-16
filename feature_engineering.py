@@ -25,12 +25,47 @@ label = model_df["Annual Return"]
 
 
 
-cutoff = 600
+cutoff = .8*len(features)
 
 mse_scores = []
 times = []
 
-while cutoff + 60 <= len(features):
+residuals = []
+
+baseline_mse_scores = []
+
+predicted_values = []
+
+X_train = features
+y_train = label
+
+X_test = features
+y_test = label
+
+lin_reg = LinearRegression()
+lin_reg.fit(X_train, y_train)
+
+predictions = lin_reg.predict(X_test)
+
+predicted_values.extend(predictions)
+
+resid = y_test - predictions
+
+residuals.extend(resid)
+
+plt.figure(figsize=(8,5))
+
+plt.scatter(predicted_values, residuals)
+
+plt.axhline(y=0, color='red', linestyle='--')
+
+plt.xlabel("Predicted Annual Return")
+plt.ylabel("Residual")
+plt.title("Residuals vs. Predicted Values")
+
+plt.show()
+
+"""while cutoff + 60 <= len(features):
 
 
     X_train = features[:cutoff]
@@ -39,11 +74,18 @@ while cutoff + 60 <= len(features):
     X_test = features[cutoff:cutoff+60]
     y_test = label[cutoff:cutoff+60]
 
+    baseline_prediction = [y_train.mean()] * len(y_test)
+
+    baseline_mse = mean_squared_error(y_test, baseline_prediction)
+
+    baseline_mse_scores.append(baseline_mse)    
+
     lin_reg = LinearRegression()
     lin_reg.fit(X_train, y_train)
 
     predictions = lin_reg.predict(X_test)
 
+    
     mse = mean_squared_error(y_test, predictions)
 
     mse_scores.append(mse)
@@ -60,10 +102,18 @@ y_train = label[:cutoff]
 X_test = features[cutoff:len(features)]
 y_test = label[cutoff:len(features)]
 
+baseline_prediction = [y_train.mean()] * len(y_test)
+
+baseline_mse = mean_squared_error(y_test, baseline_prediction)
+
+baseline_mse_scores.append(baseline_mse)
+
 lin_reg = LinearRegression()
 lin_reg.fit(X_train, y_train)
 
 predictions = lin_reg.predict(X_test)
+
+
 
 mse = mean_squared_error(y_test, predictions)
 mse_scores.append(mse)
@@ -73,16 +123,9 @@ times.append(time_period)
 
 for i in range(len(times)):
     year = times[i][:4]
-    times[i] = year
+    times[i] = year"""
 
-plt.plot(times, mse_scores)
 
-plt.xlabel("Date")
-plt.xticks(fontsize = 7)
-plt.ylabel("MSE")
-plt.title("MSE of Model Over Time")
-
-plt.savefig("mse_ot.png")
 
 
 
