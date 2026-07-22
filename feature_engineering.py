@@ -2,9 +2,12 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
-import statistics
 from scipy import stats
 from sklearn.neighbors import KNeighborsRegressor
+import statsmodels.api as sm
+import numpy as np
+
+
 
 df = pd.read_csv("cleaned_sp500.csv")
 
@@ -27,7 +30,7 @@ model_df = df[df["Annual Return"].notna()].reset_index(drop=True)
 features = model_df[["PE10"]]
 label = model_df["Annual Return"]
 
-def expanding_window():
+def expanding_window_LR():
 
     cutoff = 600
 
@@ -75,26 +78,30 @@ def expanding_window():
 
     times.append(model_df["Date"][cutoff][:4])
 
-    """plt.figure(figsize=(9,5))
+    plt.figure(figsize=(9,5))
 
-    plt.plot(times, mse_scores)
+    knn_mse = expanding_window_KNN()
+
+    plt.plot(times, mse_scores, label = "Linear Regression")
+    plt.plot(times, knn_mse, label = "KNN Regresion")
+    plt.plot(times, baseline_mse_scores, label = "Historical Mean")
 
     plt.xlabel("Test Period")
     plt.ylabel("Mean Squared Error")
-    plt.title("Expanding-Window Forecast Performance")
+    plt.title("Expanding-Window Forecast Performance Between Models")
     plt.xticks(fontsize=8)
     plt.legend()
 
     plt.tight_layout()
-    plt.savefig("mse_ot.png")"""
+    plt.savefig("model_comparison.png")
 
-    model_mse_avg = statistics.mean(mse_scores)
+    """model_mse_avg = statistics.mean(mse_scores)
     baseline_mse_avg = statistics.mean(baseline_mse_scores)
     improvement = (baseline_mse_avg - model_mse_avg)/baseline_mse_avg
 
     print(model_mse_avg)
     print(baseline_mse_avg)
-    print(improvement)
+    print(improvement)"""
 
 def model_accuracy():
     cutoff = int(.8 * len(features))
@@ -143,47 +150,23 @@ def lin_reg_appropriate():
     plt.savefig("qqresidplot.png")
 
 def expanding_window_KNN():
-    k = []
-    for i in range(3, 40):
-        k.append(i)
     
-    avg_mse = []
+    
+    
+    neighbors  = 105
+    cutoff = 600
 
-    for neighbors in k:
+    mse_scores = []
+    baseline_mse_scores = []
+    times = []
 
-        cutoff = 600
-
-        mse_scores = []
-        baseline_mse_scores = []
-        times = []
-
-        while cutoff + 60 <= len(features):
-
-            X_train = features[:cutoff]
-            y_train = label[:cutoff]
-
-            X_test = features[cutoff:cutoff+60]
-            y_test = label[cutoff:cutoff+60]
-
-            knn = KNeighborsRegressor(neighbors)
-            knn.fit(X_train, y_train)
-
-            predictions = knn.predict(X_test)
-
-            mse_scores.append(mean_squared_error(y_test, predictions))
-
-            baseline_prediction = [y_train.mean()] * len(y_test)
-            baseline_mse_scores.append(mean_squared_error(y_test, baseline_prediction))
-
-            times.append(model_df["Date"][cutoff][:4])
-
-            cutoff += 60
+    while cutoff + 60 <= len(features):
 
         X_train = features[:cutoff]
         y_train = label[:cutoff]
 
-        X_test = features[cutoff:]
-        y_test = label[cutoff:]
+        X_test = features[cutoff:cutoff+60]
+        y_test = label[cutoff:cutoff+60]
 
         knn = KNeighborsRegressor(neighbors)
         knn.fit(X_train, y_train)
@@ -197,18 +180,53 @@ def expanding_window_KNN():
 
         times.append(model_df["Date"][cutoff][:4])
 
+        cutoff += 60
 
-        model_mse_avg = statistics.mean(mse_scores)
-        
-        avg_mse.append(model_mse_avg)
-    
-    min_mse = min(avg_mse)
+    X_train = features[:cutoff]
+    y_train = label[:cutoff]
 
-    index = avg_mse.index(min_mse)
+    X_test = features[cutoff:]
+    y_test = label[cutoff:]
 
-    print(f"K = {k[index]}, MSE = {min_mse}")
+    knn = KNeighborsRegressor(neighbors)
+    knn.fit(X_train, y_train)
 
-        
+    predictions = knn.predict(X_test)
 
-expanding_window_KNN()
+    mse_scores.append(mean_squared_error(y_test, predictions))
 
+    baseline_prediction = [y_train.mean()] * len(y_test)
+    baseline_mse_scores.append(mean_squared_error(y_test, baseline_prediction))
+
+    times.append(model_df["Date"][cutoff][:4])
+
+    return mse_scores
+
+
+   
+
+def newey_west_corr():
+    x = features
+
+    x = sm.add_constant(x)
+
+    y = label
+
+    z = sm.OLS(y, x)
+
+    result = z.fit()
+
+    print(result.summary())
+
+    result = z.fit(cov_type = 'HAC', cov_kwds={"maxlags":120})
+
+    print(result.summary())
+
+def kernel_reg():
+    def gaussian_kernel(distance, h):
+        weight = np.exp(-0.5 * ((distance/h)**2))
+        return weight
+
+    def 
+
+newey_west_corr()
