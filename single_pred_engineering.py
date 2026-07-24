@@ -78,30 +78,7 @@ def expanding_window_LR():
 
     times.append(model_df["Date"][cutoff][:4])
 
-    plt.figure(figsize=(9,5))
-
-    knn_mse = expanding_window_KNN()
-
-    plt.plot(times, mse_scores, label = "Linear Regression")
-    plt.plot(times, knn_mse, label = "KNN Regresion")
-    plt.plot(times, baseline_mse_scores, label = "Historical Mean")
-
-    plt.xlabel("Test Period")
-    plt.ylabel("Mean Squared Error")
-    plt.title("Expanding-Window Forecast Performance Between Models")
-    plt.xticks(fontsize=8)
-    plt.legend()
-
-    plt.tight_layout()
-    plt.savefig("model_comparison.png")
-
-    """model_mse_avg = statistics.mean(mse_scores)
-    baseline_mse_avg = statistics.mean(baseline_mse_scores)
-    improvement = (baseline_mse_avg - model_mse_avg)/baseline_mse_avg
-
-    print(model_mse_avg)
-    print(baseline_mse_avg)
-    print(improvement)"""
+    return baseline_mse_scores, mse_scores, times
 
 def model_accuracy():
     cutoff = int(.8 * len(features))
@@ -223,10 +200,134 @@ def newey_west_corr():
     print(result.summary())
 
 def kernel_reg():
+
     def gaussian_kernel(distance, h):
         weight = np.exp(-0.5 * ((distance/h)**2))
         return weight
+    def predict_one(test, training_PE10, training_returns, h):
+        distances = []
 
-    def 
+        for value in training_PE10:
+            distances.append(value - test)
 
-newey_west_corr()
+        distances = np.array(distances)
+
+        weights = gaussian_kernel(distances, h)
+
+        sum_weights = sum(weights)
+
+        sum_mult = sum(training_returns * weights)
+
+
+        return sum_mult/sum_weights
+
+    def bandwidth_sel(training_PE10, training_returns, h_values):
+        best_h = None
+
+        training_returns = np.array(training_returns)
+        training_PE10 = np.array(training_PE10)
+
+        best_error = float('inf')
+
+        for h in h_values:
+
+            errors = []
+
+            for i in range(len(training_PE10)):
+
+                pe10 = np.delete(training_PE10, i)
+
+                returns = np.delete(training_returns, i)
+
+                pred = predict_one(training_PE10[i], pe10, returns, h)
+
+                error = (pred - training_returns[i])**2
+
+                errors.append(error)
+
+            avg_error = np.mean(errors)
+
+            if avg_error < best_error:
+                best_error = avg_error
+                best_h = h
+
+        return best_h
+
+    cutoff = 600
+    training_PE10 = np.array(features["PE10"][:cutoff])
+
+    training_returns = np.array(label[:cutoff])
+
+    h_values = np.arange(1,30,1)
+
+    best_h = bandwidth_sel(training_PE10, training_returns, h_values)
+
+    times = []
+
+    predictions = []
+
+    mse_scores = []
+
+    while cutoff + 60 <= len(features):
+    
+        training_PE10 = np.array(features["PE10"][:cutoff])
+        training_returns = np.array(label[:cutoff])
+
+        X_test = np.array(features["PE10"][cutoff: cutoff+60])
+        y_test = np.array(label[cutoff:cutoff+60])
+
+
+        predictions = []
+
+        for i in range(len(X_test)):
+
+            pred = predict_one(X_test[i], training_PE10, training_returns, best_h)
+            predictions.append(pred)
+
+        mse_scores.append(mean_squared_error(y_test, predictions))
+
+        times.append(model_df["Date"][cutoff][:4])
+
+        cutoff += 60
+
+    predictions = []
+
+    training_PE10 = np.array(features["PE10"][:cutoff])
+    training_returns = np.array(label[:cutoff])
+
+    X_test = np.array(features["PE10"][cutoff:])
+    y_test = np.array(label[cutoff:])
+
+    for i in range(len(X_test)):
+
+        pred = predict_one(X_test[i], training_PE10, training_returns, best_h)
+        predictions.append(pred)
+
+    mse_scores.append(mean_squared_error(y_test, predictions))
+
+    return mse_scores
+
+
+
+baseline_mse_scores, lr_mse, times = expanding_window_LR()
+    
+plt.figure(figsize=(9,5))
+
+knn_mse = expanding_window_KNN()
+
+kernel_mse = kernel_reg()
+
+plt.plot(times, lr_mse, label = "Linear Regression")
+plt.plot(times, knn_mse, label = "KNN Regresion")
+plt.plot(times, baseline_mse_scores, label = "Historical Mean")
+plt.plot(times, kernel_mse, label = "Kernel Regression")
+
+
+plt.xlabel("Test Period")
+plt.ylabel("Mean Squared Error")
+plt.title("Expanding-Window Forecast Performance Between Models")
+plt.xticks(fontsize=8)
+plt.legend()
+
+plt.tight_layout()
+plt.show()
