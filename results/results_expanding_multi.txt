@@ -1,0 +1,97 @@
+EXPANDING WINDOW — MULTI PREDICTOR (PE10 + Dividend Yield)
+
+Optimal K (from MSE-vs-K curve): 551  [fixed at 223 for all reported runs]
+Optimal bandwidth h: 1
+
+Average OOS-R2 (all folds):
+  LR (PE10 only):     -0.0908
+  LR (DivYield only): -0.6245
+  LR (Combined):      -0.1904
+  KNN (Combined):     -0.1637
+  Kernel (Combined):  -0.0899
+
+Average OOS-R2 (excluding 1991):
+  LR (PE10 only):     0.1417
+  LR (DivYield only): -0.4954
+  LR (Combined):      0.0353
+  KNN (Combined):     0.0462
+  Kernel (Combined):  0.0249
+
+Fold-by-fold OOS-R2 with starting CAPE:
+Period     CAPE   LR_PE10   LR_DivY   LR_Comb      KNN   Kernel
+1931       16.7    -0.436    -5.832    -2.129   -0.144   -1.851
+1936       17.1     0.470     0.022     0.429    0.191    0.319
+1941       13.9     0.494     0.181     0.485   -0.172    0.071
+1946       15.6     0.327     0.144     0.325    0.042    0.068
+1951       11.9     0.196     0.162     0.195   -0.035    0.005
+1956       18.3    -0.613    -1.698    -0.635   -0.660   -0.611
+1961       18.5     0.801     0.588     0.800    0.500    0.448
+1966       24.1     0.588     0.530     0.577    0.427    0.381
+1971       16.5     0.120     0.683     0.167    0.311    0.324
+1976       11.2     0.902     0.011     0.899    0.709    0.539
+1981        9.3     0.916    -0.017     0.827    0.698    0.470
+1986       11.7    -0.206    -0.913    -0.375   -0.502   -0.382
+1991       15.6    -3.811    -2.691    -3.801   -3.522   -1.927
+1996       24.8     0.261     0.694     0.207    0.618    0.891
+2001       37.0     0.349     0.490     0.360    0.659    0.808
+2006       26.5    -0.879    -1.585    -0.780   -0.922   -0.509
+2011       23.0    -1.022    -1.384    -0.789   -0.980   -0.574
+
+Newey-West / naive OLS (PE10 + Dividend Yield):
+
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:          Annual Return   R-squared:                       0.280
+Model:                            OLS   Adj. R-squared:                  0.280
+Method:                 Least Squares   F-statistic:                     309.3
+Date:                Fri, 31 Jul 2026   Prob (F-statistic):          3.71e-114
+Time:                        17:20:40   Log-Likelihood:                 2715.6
+No. Observations:                1590   AIC:                            -5425.
+Df Residuals:                    1587   BIC:                            -5409.
+Df Model:                           2                                         
+Covariance Type:            nonrobust                                         
+==================================================================================
+                     coef    std err          t      P>|t|      [0.025      0.975]
+----------------------------------------------------------------------------------
+const              0.1720      0.009     19.456      0.000       0.155       0.189
+PE10              -0.0051      0.000    -18.594      0.000      -0.006      -0.005
+Dividend Yield    -0.5031      0.111     -4.549      0.000      -0.720      -0.286
+==============================================================================
+Omnibus:                       35.537   Durbin-Watson:                   0.015
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):               34.906
+Skew:                          -0.331   Prob(JB):                     2.63e-08
+Kurtosis:                       2.704   Cond. No.                     1.79e+03
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The condition number is large, 1.79e+03. This might indicate that there are
+strong multicollinearity or other numerical problems.
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:          Annual Return   R-squared:                       0.280
+Model:                            OLS   Adj. R-squared:                  0.280
+Method:                 Least Squares   F-statistic:                     19.26
+Date:                Fri, 31 Jul 2026   Prob (F-statistic):           5.43e-09
+Time:                        17:20:40   Log-Likelihood:                 2715.6
+No. Observations:                1590   AIC:                            -5425.
+Df Residuals:                    1587   BIC:                            -5409.
+Df Model:                           2                                         
+Covariance Type:                  HAC                                         
+==================================================================================
+                     coef    std err          z      P>|z|      [0.025      0.975]
+----------------------------------------------------------------------------------
+const              0.1720      0.048      3.613      0.000       0.079       0.265
+PE10              -0.0051      0.001     -4.638      0.000      -0.007      -0.003
+Dividend Yield    -0.5031      0.653     -0.770      0.441      -1.784       0.778
+==============================================================================
+Omnibus:                       35.537   Durbin-Watson:                   0.015
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):               34.906
+Skew:                          -0.331   Prob(JB):                     2.63e-08
+Kurtosis:                       2.704   Cond. No.                     1.79e+03
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity and autocorrelation robust (HAC) using 120 lags and without small sample correction
+[2] The condition number is large, 1.79e+03. This might indicate that there are
+strong multicollinearity or other numerical problems.

@@ -1,0 +1,97 @@
+EXPANDING WINDOW — SINGLE PREDICTOR (PE10 only)
+
+Optimal K (from MSE-vs-K curve): 596  [fixed at 105 for all reported runs]
+Optimal bandwidth h: 1
+
+Average OOS-R2 (all folds):
+  LR:     -0.0908
+  KNN:    -0.3064
+  Kernel: 0.1380
+
+Average OOS-R2 (excluding 1991):
+  LR:     0.1417
+  KNN:    -0.0983
+  Kernel: 0.2303
+
+Average MSE:
+  Historical Mean baseline: 0.003095
+  LR:     0.002475
+  KNN:    0.002990
+  Kernel: 0.002457
+
+Fold-by-fold OOS-R2 with starting CAPE:
+Period     CAPE       LR      KNN   Kernel
+1931       16.7   -0.436   -0.657    0.360
+1936       17.1    0.470    0.152    0.329
+1941       13.9    0.494   -0.324    0.030
+1946       15.6    0.327    0.105    0.063
+1951       11.9    0.196   -0.201   -0.007
+1956       18.3   -0.613   -1.420   -0.220
+1961       18.5    0.801    0.650    0.435
+1966       24.1    0.588    0.557    0.318
+1971       16.5    0.120   -0.061    0.122
+1976       11.2    0.902    0.831    0.682
+1981        9.3    0.916    0.900    0.597
+1986       11.7   -0.206   -0.440   -0.134
+1991       15.6   -3.811   -3.635   -1.338
+1996       24.8    0.261    0.696    0.896
+2001       37.0    0.349    0.323    0.794
+2006       26.5   -0.879   -1.036   -0.191
+2011       23.0   -1.022   -1.649   -0.391
+
+Bootstrap permutation test (5,000 iterations):
+  Real PE10 coefficient: -0.004109
+  Bootstrap p-value: 0.0
+
+Newey-West / naive OLS (PE10 only):
+
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:          Annual Return   R-squared:                       0.271
+Model:                            OLS   Adj. R-squared:                  0.271
+Method:                 Least Squares   F-statistic:                     590.6
+Date:                Fri, 31 Jul 2026   Prob (F-statistic):          3.54e-111
+Time:                        17:20:28   Log-Likelihood:                 2705.3
+No. Observations:                1590   AIC:                            -5407.
+Df Residuals:                    1588   BIC:                            -5396.
+Df Model:                           1                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          0.1342      0.003     44.734      0.000       0.128       0.140
+PE10          -0.0041      0.000    -24.302      0.000      -0.004      -0.004
+==============================================================================
+Omnibus:                       33.018   Durbin-Watson:                   0.013
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):               29.230
+Skew:                          -0.275   Prob(JB):                     4.50e-07
+Kurtosis:                       2.628   Cond. No.                         48.2
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:          Annual Return   R-squared:                       0.271
+Model:                            OLS   Adj. R-squared:                  0.271
+Method:                 Least Squares   F-statistic:                     25.14
+Date:                Fri, 31 Jul 2026   Prob (F-statistic):           5.94e-07
+Time:                        17:20:28   Log-Likelihood:                 2705.3
+No. Observations:                1590   AIC:                            -5407.
+Df Residuals:                    1588   BIC:                            -5396.
+Df Model:                           1                                         
+Covariance Type:                  HAC                                         
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          0.1342      0.017      7.803      0.000       0.100       0.168
+PE10          -0.0041      0.001     -5.014      0.000      -0.006      -0.003
+==============================================================================
+Omnibus:                       33.018   Durbin-Watson:                   0.013
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):               29.230
+Skew:                          -0.275   Prob(JB):                     4.50e-07
+Kurtosis:                       2.628   Cond. No.                         48.2
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity and autocorrelation robust (HAC) using 120 lags and without small sample correction

@@ -1,0 +1,40 @@
+ROLLING WINDOW RESULTS — SINGLE PREDICTOR (PE10 only)
+
+Window size: 600 rows (~50 years)
+Rolling KNN neighbors: 105 (matches expanding single-pred K)
+Rolling kernel bandwidth h: 1 (expanding kernel h: 1)
+
+Average OOS-R2, Rolling (all folds):
+  LR:     -0.4687
+  KNN:    -0.7348
+  Kernel: 0.0819
+
+Average OOS-R2, Rolling (excluding 1991):
+  LR:     0.0835
+  KNN:    -0.1727
+  Kernel: 0.2787
+
+Expanding vs. Rolling, average OOS-R2 (excluding 1991):
+  LR      — Expanding: 0.1417   Rolling: 0.0835
+  KNN     — Expanding: -0.0983   Rolling: -0.1727
+  Kernel  — Expanding: 0.2303   Rolling: 0.2787
+
+Fold-by-fold OOS-R2 (Rolling vs Expanding, all three models), with starting CAPE:
+Period     CAPE  LR_Roll   LR_Exp  KNN_Roll  KNN_Exp  Ker_Roll  Ker_Exp
+1931       16.7   -0.436   -0.436    -0.657   -0.657     0.360    0.360
+1936       17.1    0.486    0.470     0.081    0.152     0.361    0.329
+1941       13.9    0.466    0.494    -0.400   -0.324     0.019    0.030
+1946       15.6    0.298    0.327     0.104    0.105     0.070    0.063
+1951       11.9    0.015    0.196    -0.371   -0.201    -0.037   -0.007
+1956       18.3   -2.518   -0.613    -3.456   -1.420    -0.420   -0.220
+1961       18.5    0.889    0.801     0.707    0.650     0.621    0.435
+1966       24.1    0.691    0.588     0.676    0.557     0.417    0.318
+1971       16.5    0.114    0.120    -0.031   -0.061     0.000    0.122
+1976       11.2    0.675    0.902     0.548    0.831     0.854    0.682
+1981        9.3    0.976    0.916     0.896    0.900     0.800    0.597
+1986       11.7   -0.412   -0.206    -0.552   -0.440    -0.091   -0.134
+1991       15.6   -9.304   -3.811    -9.729   -3.635    -3.068   -1.338
+1996       24.8   -0.071    0.261     0.752    0.696     0.818    0.896
+2001       37.0    0.649    0.349     0.323    0.323     0.757    0.794
+2006       26.5   -0.182   -0.879    -0.469   -1.036     0.031   -0.191
+2011       23.0   -0.306   -1.022    -0.914   -1.649    -0.101   -0.391
